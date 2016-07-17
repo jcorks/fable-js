@@ -19,35 +19,33 @@ is done through the builder interface. You may notice that how the user
 explores the text adventure is very closely related to how you as the developer 
 specify story logic. 
 
-We are going to write our own simple fable as an example.
+We are going to write our own simple story as an example.
 Here is what we have so far.
 
-`
+
     Fable.Scene("Forest")
       .Action("take")
         .Object("weapon", 
             function(){
                 console.log("* You arm yourself.";)
-            }
+            })
         
         .Object("stone",
             function(){
                 console.log("* You take the stone.";)
             })
     ;
-    
-   Fable.GoToScene("Forest");
-`
+    Fable.GoToScene("Forest");
+
 
 We create a scene "Forest" with an action and 2 objects that can receive the action:
 
-`
     Fable.Parse("take weapon"); 
     >* You arm yourself.
-    
     Fable.Parse("take stone");
     >* You take the stone.
-`
+    
+
 
 
 Action(), Object(), and Scene() are part of the builder's interface. The behavior 
@@ -56,15 +54,12 @@ always defined on the object.
 
 You can also specify aliases and word blacklists to better approach general situations:
 
-`
     Fable.Alias("weapon", ["sword", "axe", "sharp thing", "knife"]);
-    Fable.Ignore(["at", "the"]);
-`           
+    Fable.Ignore(["at", "the", "please"]);
 
-... allowing for:
+... allowing for for natural and dynamic commands:
 
-`
-    Fable.Parse("take the sharp thing");
+    Fable.Parse("take the sharp thing please");
     >* You arm yourself.
-`
+
 
