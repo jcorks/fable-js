@@ -1,8 +1,11 @@
 /*  
 
+Fable-js: a simple text-adventure engine.
+
 The MIT License (MIT)
 
 Copyright (c) 2016 Johnathan Corkery
+(jcorkery@umich.edu)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,10 +39,11 @@ var Fable = {};
 Fable.ContextObject = function(name){
     this.name           = name;
     this.cb             = null;
-    this.map            = [];
+    this.map            = {};
     this.defaultRef     = null;
     this.prompt         = null;
     this.parent         = null;
+    this.instance       = {};
 }
 
 
@@ -205,6 +209,19 @@ Fable._CreateNodes = function(rawName, nodeLevel) {
 //  - any ignored words 
 //  - normalizes capitalization
 Fable._CleanInput = function(input) {
+    for(var i = 0; i < input.length; ++i) {
+        if (input[i] == '.' ||
+            input[i] == ',' ||
+            input[i] == '|' ||
+            input[i] == '[' ||
+            input[i] == ']' ||
+            input[i] == '|' ||
+            input[i] == '<' ||
+            input[i] == '>' ||
+            input[i] == '!' ||
+            input[i] == ';' ||
+            input[i] == ':') input[i] = ' ';
+    }
     input = input.trim();
     input = input.toLowerCase();
     var pair = null;
@@ -428,7 +445,7 @@ Fable.Parse = function(input) {
     if (currentObject == null ||
         currentObject.cb == null) return;
         
-    var replacement = currentObject.cb();
+    var replacement = currentObject.cb(Fable.currentScene.instance);
     if (replacement != null) {
         if (typeof replacement === 'function')
             currentObject.cb = replacement;
@@ -448,7 +465,7 @@ Fable.GoToScene = function(name) {
     var scene = Fable.root.map[name];
     Fable.currentScene = scene;
     if (scene.prompt)
-        scene.prompt();
+        scene.prompt(scene.instance);
 }
 
 

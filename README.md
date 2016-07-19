@@ -24,15 +24,19 @@ Here is what we have so far.
 
 
     Fable.Scene("Forest")
+      .OnEnter(function(forest) {
+        console.log("You enter the forest");
+      })
+        
       .Action("take")
         .Object("weapon", 
-            function(){
-                console.log("* You arm yourself.";)
+            function(forest){
+                console.log("* You arm yourself.");
             })
         
         .Object("stone",
             function(){
-                console.log("* You take the stone.";)
+                console.log("* You take the stone.");
             })
     ;
     Fable.GoToScene("Forest");
@@ -52,14 +56,14 @@ Action(), Object(), and Scene() are part of the builder's interface. The behavio
 is a lot like a selector: you specify the context that receives the action. The bahevior is 
 always defined on the object.
 
-You can also specify aliases and word blacklists to better approach general situations:
+You can also specify aliases and words to ignore to better approach general situations:
 
     Fable.Alias("weapon", ["sword", "axe", "sharp thing", "knife"]);
     Fable.Ignore(["at", "the", "please"]);
 
 ... allowing for for natural and dynamic commands:
 
-    Fable.Parse("take the sharp thing please");
+    Fable.Parse("Take the sharp thing, please.");
     >* You arm yourself.
 
 
