@@ -2,12 +2,11 @@
 
 
 world = {}
-world.backpack = []; //< inventory
+world.backpack = {}; //< inventory
 world.backpack.powered = {};
+world.backpack.contents = [];
 world.text = "";     //< main text for the story
 world.input = "";    //<text form the output only
-world.door = {};
-world.door.locked = true;
 
 
 // Prints additional text to the main story board
@@ -17,24 +16,31 @@ world.Print = function(text){
     world.Update();
 }
 
-// Handles what to do if the player wants to exit
-world.LeavePrompt = function() {
-    console.log("You have trouble leaving...");
-}
 
 
+
+///////// Inentory //////////////////////
 
 // Adds an object to the inventory
 world.backpack.Add = function(name) {
     world.Print("You put the " + name + " in your backpack.");
-    world.backpack.push(name);    
+    world.backpack.contents.push(name);    
     world.backpack.powered[name] = false;
 }
 
+world.backpack.Remove = function(name) {
+    if (!world.backpack.Has(name)) return;
+    var newArr = [];
+    for(var i = 0; i < world.backpack.contents.length; ++i) {
+        if (world.backpack.contents[i] != name)
+            newArr.push(world.backpack.contents[i]);
+    }
+    world.backpack.contents = newArr;
+}
 
 // Returns whether the item is in the backpack
 world.backpack.Has = function(item) {
-    return world.backpack.indexOf(item) != -1;
+    return world.backpack.contents.indexOf(item) != -1;
 }
 
 // Powers up the item
@@ -50,14 +56,24 @@ world.backpack.IsPowered = function(item) {
 // Prints the inventory of the player
 world.backpack.Print = function(){
     world.Print("You fish through your backpack...");
-    if (world.backpack.length == 0) {
+    if (world.backpack.contents.length == 0) {
         world.Print("Unfortunately, your pockets are empty.");
     } else {
-        for(var n = 0; n < this.length; ++n) {
-            world.Print("You find a(n) " + this[n]);
+        for(var n = 0; n < world.backpack.contents.length; ++n) {
+            world.Print("You find a(n) " + world.backpack.contents[n]);
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 // Updates the display
 world.Update = function() {

@@ -27,7 +27,7 @@ Fable.Alias("get",       ["take",       "pick",    "pick up",     "lift",       
 Fable.Alias("open",      ["unlock"]);
 Fable.Alias("attack",    ["break",      "cut",     "slice",   "hit"]);
 Fable.Alias("leave",     ["exit",       "depart"]);
-Fable.Alias("light",     ["light bulb", "bulb"]);
+Fable.Alias("light",     ["light bulb", "bulb",    "lightbulb"]);
 Fable.Alias("place",     ["put",        "replace"]);
 Fable.Alias("say",       ["yell",       "scream",  "exclaim"]);
 
@@ -71,9 +71,12 @@ Fable.Scene("Room")
     .OnEnter(function(room){
         world.Print("You find yourself in an dimly-lit room.");
 
-        room.doorLocked = true;
-        room.hasSword   = true;
-        room.hasLight   = true;
+        if (!room.visited) {
+            room.doorLocked = true;
+            room.hasSword   = true;
+            room.hasLight   = true;
+            room.visited;
+        }
     })
 
     // "*" is the default handler. If the subject doesnt match, the default handler will be called instead
@@ -216,11 +219,14 @@ Fable.Scene("Room")
             
         .Object("light",
             function(room){
-                world.backpack.Add("light");
-                if (room.doorLocked) {
-                    Fable.GoToScene("DarkRoom");
+                if (world.backpack.Has("light")) {
+                    world.Print("You already took the light.");
+                    
                 } else {
-                    return function(){world.Print("You already took the light.");}
+                    world.backpack.Add("light");
+                    if (room.doorLocked) {
+                        Fable.GoToScene("DarkRoom");
+                    }
                 }
             })
             
@@ -293,8 +299,11 @@ Fable.Scene("DarkRoom")
         .Object("light", function(){
             if (world.backpack.Has("light")) {
                 world.Print("You fumble around in the darkness, yet");
-                world.Print("manage to somehow get the bulb back in place");
+                world.Print("manage to somehow get the bulb back in place.");
+                world.backpack.Remove("light");
+                
                 Fable.GoToScene("Room");
+                
             } else {
                 world.Print("The light is regretably still broken.");
             }

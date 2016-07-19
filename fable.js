@@ -188,9 +188,9 @@ Fable._CreateNodes = function(rawName, nodeLevel) {
         var ref =      Fable._RetrieveNodes(parents[n], nameList);    
 
       
+        // For each missing object, create a new one and map it directly
         for(var i = 0; i < ref.length; ++i) {
             if (!ref[i]) {
-                console.log("Mapping " + nameList[i] + " to " + parents[n].name);
                 ref[i] = Fable._GenerateContextObject(nameList[i], parents[n]);
             }
             allObjs.push(ref[i]);
@@ -271,12 +271,10 @@ Fable._ParseGroup = function(input, root) {
         // direct name from current context map
         if (currentObject.map[tokens[i]]) {
             ref = currentObject.map[tokens[i]];
-            console.log(currentObject.name + " maps " + tokens[i]);
             out.rating += 3;
         // default handler from the current context
         } else if (currentObject.defaultRef != null) {
             ref = currentObject.defaultRef;
-            console.log(currentObject.name + " doesnt map " + tokens[i] + ", but has a default handler");
             out.rating += 2;
         } else {
             break;   
@@ -431,6 +429,7 @@ Fable.Parse = function(input) {
                             generalContextResult.object
                         );
     
+    /*
     console.log("normal  context match: " + (normalContextResult.object ? 
                                             normalContextResult.object.name : "<no object>")
                                          + "-> rating: " + normalContextResult.rating
@@ -439,7 +438,7 @@ Fable.Parse = function(input) {
     console.log("general context match: " + (generalContextResult.object ? 
                                             generalContextResult.object.name : "<no object>")
                                          + "-> rating: " + generalContextResult.rating
-                );                
+                ); */               
 
     // we found something, call its cb
     if (currentObject == null ||
@@ -471,10 +470,11 @@ Fable.GoToScene = function(name) {
 
 // ignores the specified word in parsing contexts
 Fable.Ignore = function(exWord) {
+    
     if (typeof exWord == "string")
-        Fable.blacklist.push(exWord);
+        Fable.blacklist.push(exWord.trim().toLowerCase());
     for(var i = 0; i < exWord.length; ++i) {
-        Fable.blacklist.push(exWord[i]);
+        Fable.blacklist.push(exWord[i].trim().toLowerCase());
     }
 }
 
