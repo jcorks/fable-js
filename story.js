@@ -12,7 +12,7 @@
 // you have the ability to completely ignore words when parsing.
 // only be absolutely sure you want to do this, as sometimes the extraneousness of 
 // a word is context-dependent.
-Fable.Ignore(["the", "at"]);
+Fable.Ignore(["the", "at", "I", "please", "would"]);
 
 
 // you also have the ability to set aliases. Aliases are just words or groups of words that 
@@ -20,9 +20,17 @@ Fable.Ignore(["the", "at"]);
 // the different ways of saying it. Aliases may have spaces and symbols.
 // Just like ignoring words, there are some cases where aliases may be context-dependent 
 // depeinding on what you want to express, so use with caution.
-Fable.Alias("sword",     ["blade",    "weapon",  "pointy thing"]);
-Fable.Alias("check",     ["look",     "examine", "go to",      "scrutinize"]);
-Fable.Alias("inventory", ["backpack", "goods",   "stuff"]);
+Fable.Alias("sword",     ["blade",      "weapon",  "pointy thing "]);
+Fable.Alias("check",     ["look",       "examine", "go to",       "scrutinize", "examine", "inspect", "consider"]);
+Fable.Alias("inventory", ["backpack",   "goods",   "stuff"]);
+Fable.Alias("get",       ["take",       "pick",    "pick up",     "lift",       "lift up"]);
+Fable.Alias("open",      ["unlock"]);
+Fable.Alias("attack",    ["break",      "cut",     "slice",   "hit"]);
+Fable.Alias("leave",     ["exit",       "depart"]);
+Fable.Alias("light",     ["light bulb", "bulb",    "lightbulb"]);
+Fable.Alias("place",     ["put",        "replace"]);
+Fable.Alias("say",       ["yell",       "scream",  "exclaim"]);
+
 
  // The "*" scene is the default scene. In any context, if a parsed command does not 
  // match anything in the current scene, the default scene is tested against. The default scene 
@@ -60,12 +68,21 @@ Fable.Scene("*")
 
 // The initial scene.
 Fable.Scene("Room")
-    .OnEnter(function(){world.Print("You find yourself in an dimly-lit room.");})
+    .OnEnter(function(room){
+        world.Print("You find yourself in an dimly-lit room.");
+
+        if (!room.visited) {
+            room.doorLocked = true;
+            room.hasSword   = true;
+            room.hasLight   = true;
+            room.visited;
+        }
+    })
 
     // "*" is the default handler. If the subject doesnt match, the default handler will be called instead
     .Action("check")         
         .Object("*", 
-            function(){
+            function(room){
                 world.Print("The room you're in is of little comfort, that's for sure.");
                 world.Print("Scanning across the walls lit by a single bulb in the center of the ceiling,");
                 world.Print("you find one door and a disturbing lack of windows.");
@@ -73,7 +90,7 @@ Fable.Scene("Room")
                 if (!world.backpack.Has("sword"))
                     world.Print("Something shimmers on the ground.");
                 
-                if (!world.door.locked)
+                if (!room.doorLocked)
                     world.Print("The door is open. Light from the outside flows in the room.");
             })
 
@@ -83,6 +100,13 @@ Fable.Scene("Room")
             function(){
                 world.Print("Upon closer examination, the shimmer on the ground appears to be a sword.");
 
+            })
+        
+        
+        .Object(["light", "ceiling"],
+            function(){
+                world.Print("The ceiling is pretty bare except for the incandescent bulb at");
+                world.Print("its center. You listen to the bulb's low, electrical hum.");
             })
         
         
@@ -98,27 +122,17 @@ Fable.Scene("Room")
             })
             
 
-    .Action(["attack","break","unlock","open"])
+    .Action(["open", "attack"])
         .Object("door",
-            function(){
+            function(room){
                 if (world.backpack.Has("sword") && world.backpack.IsPowered("sword")) {
                     world.Print("The energized blade cuts through the door with");
                     world.Print("great ease as you follow through your swing. The cleaved");
                     world.Print("door falls over.");
                     
-                    world.door.locked = false;
+                    room.doorLocked = false;
                     
-                    Fable.Scene("Room").Action(["go","walk"]).Object("outside",
-                        function(){
-                            Fable.GoToScene("Outside");
-                        }
-                    );
-                    
-                    Fable.Scene("Room").Action(["exit","leave"]).Object("*",
-                        function(){
-                            Fable.GoToScene("Outside");
-                        }
-                    );
+
                     
                     
                 } else if (world.backpack.Has("sword")) {
@@ -132,8 +146,30 @@ Fable.Scene("Room")
                 }
         })
 
+        
+    .Action("attack")
+        .Object("light",
+            function(room){
+
+                
+                if (!room.doorLocked) {
+                    world.Print("The light bulb shatters. The light from the outside fills the room.");
+                } else {
+                    world.Print("The light bulb shatters, and with it");
+                    world.Print("your chance at survival, unfortunately.");
+                    Fable.GoToScene("DarkRoom");
+                }
+                
+                
+                
+                return function(){
+                    world.Print("It's already broken.");
+                }
+            })
+        
+
             
-    .Action(["take","pick","get"])
+    .Action("get")
         .Object("sword", 
             function(){
                 world.Print("You pick up the sword. Good thinking.");
@@ -180,20 +216,102 @@ Fable.Scene("Room")
                 };
                 
             })
+            
+        .Object("light",
+            function(room){
+                if (world.backpack.Has("light")) {
+                    world.Print("You already took the light.");
+                    
+                } else {
+                    world.backpack.Add("light");
+                    if (room.doorLocked) {
+                        Fable.GoToScene("DarkRoom");
+                    }
+                }
+            })
+            
+            
+            
         .Object("*",
             function(){world.Print("There doesn't seem to be one nearby..");})
+            
+            
 
-
+    .Action(["go","walk"])
+        .Object("*",
+            function(room){
+                if (!room.doorLocked)
+                    Fable.GoToScene("Outside");
+                else {
+                    world.Print("You pace around the room thing about how much");
+                    world.Print("you dislike being in this room.");
+                }
+            })
     
+    
+    .Action(["leave"])
+        .Object("*",
+            function(room){
+                if (!room.doorLocked)
+                    Fable.GoToScene("Outside");
+                else {
+                    world.Print("As much as you'd like to leave this lovely room");
+                    world.Print("(which you do), the door still blocks your way.");
+                }
+            })
+    
+    
+    .Action(["say"])
+        .Object("*")
 ;
 
 
+
+
+
+
+
 Fable.Scene("Outside")
-    .Prompt(function(){
+    .OnEnter(function(){
         world.Print("You exit the room and are blinded by the sunlight.");
         world.Print("[Demo end]");
     });
 ;
+
+
+
+
+
+
+
+
+Fable.Scene("DarkRoom")
+    .OnEnter(function(){
+        world.Print("You find yourself in a non-lit room.");
+    })
+    
+
+    .Action("*").Object("*", function(){
+            world.Print("Unfortunately, it's too dark to see anything.");})
+    
+    
+    .Action("place")
+        .Object("light", function(){
+            if (world.backpack.Has("light")) {
+                world.Print("You fumble around in the darkness, yet");
+                world.Print("manage to somehow get the bulb back in place.");
+                world.backpack.Remove("light");
+                
+                Fable.GoToScene("Room");
+                
+            } else {
+                world.Print("The light is regretably still broken.");
+            }
+            
+        });
+;
+    
+    
 
    
     

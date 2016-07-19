@@ -1,8 +1,11 @@
 /*  
 
+Fable-js: a simple text-adventure engine.
+
 The MIT License (MIT)
 
 Copyright (c) 2016 Johnathan Corkery
+(jcorkery@umich.edu)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,10 +39,11 @@ var Fable = {};
 Fable.ContextObject = function(name){
     this.name           = name;
     this.cb             = null;
-    this.map            = [];
+    this.map            = {};
     this.defaultRef     = null;
     this.prompt         = null;
     this.parent         = null;
+    this.instance       = {};
 }
 
 
@@ -184,9 +188,9 @@ Fable._CreateNodes = function(rawName, nodeLevel) {
         var ref =      Fable._RetrieveNodes(parents[n], nameList);    
 
       
+        // For each missing object, create a new one and map it directly
         for(var i = 0; i < ref.length; ++i) {
             if (!ref[i]) {
-                console.log("Mapping " + nameList[i] + " to " + parents[n].name);
                 ref[i] = Fable._GenerateContextObject(nameList[i], parents[n]);
             }
             allObjs.push(ref[i]);
@@ -205,6 +209,19 @@ Fable._CreateNodes = function(rawName, nodeLevel) {
 //  - any ignored words 
 //  - normalizes capitalization
 Fable._CleanInput = function(input) {
+    for(var i = 0; i < input.length; ++i) {
+        if (input[i] == '.' ||
+            input[i] == ',' ||
+            input[i] == '|' ||
+            input[i] == '[' ||
+            input[i] == ']' ||
+            input[i] == '|' ||
+            input[i] == '<' ||
+            input[i] == '>' ||
+            input[i] == '!' ||
+            input[i] == ';' ||
+            input[i] == ':') input[i] = ' ';
+    }
     input = input.trim();
     input = input.toLowerCase();
     var pair = null;
@@ -254,12 +271,10 @@ Fable._ParseGroup = function(input, root) {
         // direct name from current context map
         if (currentObject.map[tokens[i]]) {
             ref = currentObject.map[tokens[i]];
-            console.log(currentObject.name + " maps " + tokens[i]);
             out.rating += 3;
         // default handler from the current context
         } else if (currentObject.defaultRef != null) {
             ref = currentObject.defaultRef;
-            console.log(currentObject.name + " doesnt map " + tokens[i] + ", but has a default handler");
             out.rating += 2;
         } else {
             break;   
@@ -414,6 +429,7 @@ Fable.Parse = function(input) {
                             generalContextResult.object
                         );
     
+    /*
     console.log("normal  context match: " + (normalContextResult.object ? 
                                             normalContextResult.object.name : "<no object>")
                                          + "-> rating: " + normalContextResult.rating
@@ -422,13 +438,13 @@ Fable.Parse = function(input) {
     console.log("general context match: " + (generalContextResult.object ? 
                                             generalContextResult.object.name : "<no object>")
                                          + "-> rating: " + generalContextResult.rating
-                );                
+                ); */               
 
     // we found something, call its cb
     if (currentObject == null ||
         currentObject.cb == null) return;
         
-    var replacement = currentObject.cb();
+    var replacement = currentObject.cb(Fable.currentScene.instance);
     if (replacement != null) {
         if (typeof replacement === 'function')
             currentObject.cb = replacement;
@@ -448,16 +464,17 @@ Fable.GoToScene = function(name) {
     var scene = Fable.root.map[name];
     Fable.currentScene = scene;
     if (scene.prompt)
-        scene.prompt();
+        scene.prompt(scene.instance);
 }
 
 
 // ignores the specified word in parsing contexts
 Fable.Ignore = function(exWord) {
+    
     if (typeof exWord == "string")
-        Fable.blacklist.push(exWord);
+        Fable.blacklist.push(exWord.trim().toLowerCase());
     for(var i = 0; i < exWord.length; ++i) {
-        Fable.blacklist.push(exWord[i]);
+        Fable.blacklist.push(exWord[i].trim().toLowerCase());
     }
 }
 
