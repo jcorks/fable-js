@@ -117,10 +117,10 @@ Fable._ParseName = function(name) {
   
     for(var i = 0; i < name.length; ++i) {
         name[i] = name[i].toLowerCase().trim();
-        if (name[i].includes(" ") ||
-                name[i].includes("\n") ||
-                name[i].includes("\t") ||
-                name[i].includes("\r")) throw new Error("Names of objects are not allowed to have whitespace"); 
+        if (name[i].indexOf(" ") != -1 ||
+            name[i].indexOf("\n") != -1 ||
+            name[i].indexOf("\t") != -1 ||
+            name[i].indexOf("\r") != -1) throw new Error("Names of objects are not allowed to have whitespace"); 
             
     }
   
@@ -209,26 +209,26 @@ Fable._CreateNodes = function(rawName, nodeLevel) {
 //  - any ignored words 
 //  - normalizes capitalization
 Fable._CleanInput = function(input) {
-    for(var i = 0; i < input.length; ++i) {
-        if (input[i] == '.' ||
-            input[i] == ',' ||
-            input[i] == '|' ||
-            input[i] == '[' ||
-            input[i] == ']' ||
-            input[i] == '|' ||
-            input[i] == '<' ||
-            input[i] == '>' ||
-            input[i] == '!' ||
-            input[i] == ';' ||
-            input[i] == ':') input[i] = ' ';
-    }
+    // TODO: replace with regexp
+    input = input.replace(".", " ");
+    input = input.replace(',', " ");
+    input = input.replace('|', " ");
+    input = input.replace('[', " ");
+    input = input.replace(']', " ");
+    input = input.replace('|', " ");
+    input = input.replace('<', " ");
+    input = input.replace('>', " ");
+    input = input.replace('!', " ");
+    input = input.replace(';', " ");
+    input = input.replace(':', " ");
+    
     input = input.trim();
     input = input.toLowerCase();
     var pair = null;
     // resolve all aliases
-    for(i = 0; i < Fable.aliasList.length; ++i) {
+    for(i = 0; i < Fable.aliasList.length; i++) {
         pair = Fable.aliasList[i];
-        if (input.includes(pair.key)) {
+        if (input.indexOf(pair.key)!=-1) {
             input = input.replace(pair.key, pair.value);
             i = 0;
         }
@@ -267,7 +267,7 @@ Fable._ParseGroup = function(input, root) {
     var ref = null;
     var currentObject = root;
     var earlyRef = null;
-    for(; i < tokens.length; ++i) { 
+    for(; i < tokens.length; i++) { 
         // direct name from current context map
         if (currentObject.map[tokens[i]]) {
             ref = currentObject.map[tokens[i]];

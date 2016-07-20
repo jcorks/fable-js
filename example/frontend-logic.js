@@ -77,7 +77,7 @@ world.backpack.Print = function(){
 
 // Updates the display
 world.Update = function() {
-    document.getElementById("text").innerHTML = this.text + ">" + this.input;
+    document.getElementById("text").innerHTML = this.text;// + ">" + this.input;
     
 }
 
@@ -87,7 +87,6 @@ world.Enter = function() {
     Fable.Parse(world.input);
     world.input = "";
     world.Update();
-    window.scrollTo(0, 0);
 }
 
 
@@ -101,6 +100,17 @@ window.onload = function(){
     Fable.GoToScene("Room");
 }
 
+
+world.SubmitCommand = function() {
+    world.input = document.getElementById("command").value; 
+    document.getElementById("command").value = "";
+    world.Update();
+    world.Enter();
+    window.scrollTo(0, document.body.scrollHeight);
+    
+}
+
+/*
 document.onkeydown = function(evt) {
     var charCode = evt.keyCode || evt.which;   
     
@@ -134,6 +144,7 @@ document.onkeypress = function(evt) {
     world.Update();
     
 };
+*/
 
 
 
