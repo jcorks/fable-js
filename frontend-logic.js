@@ -87,7 +87,6 @@ world.Enter = function() {
     Fable.Parse(world.input);
     world.input = "";
     world.Update();
-    window.scrollTo(0, 0);
 }
 
 
@@ -107,7 +106,7 @@ world.SubmitCommand = function() {
     document.getElementById("command").value = "";
     world.Update();
     world.Enter();
-    
+    window.scrollTo(0, document.body.scrollHeight);
     
 }
 
