@@ -3,7 +3,8 @@ Fable-js
 
 Fable-js is a single script that allows you to easily get started on writing a 
 text adventure-like game. Fable-js uses no dependencies, nor does it require any
-special browser ability. All ES3 compatible contexts should be able to run this.
+special browser ability. All browsers newer and including Internet Explorer 5 (it's like ancient)
+should be able to run this.
 
 The aim of Fable-js is to provide an interface that naturally lends 
 its code to reflect the structure of the text adventure, while keeping its source minimal and dependence-free.
@@ -61,7 +62,7 @@ You can also specify aliases and ignored words to better approach general situat
     Fable.Alias("weapon", ["sword", "axe", "sharp thing", "knife"]);
     Fable.Ignore(["at", "the", "please"]);
 
-... allowing for for natural and dynamic commands:
+... allowing for natural and dynamic commands:
 
     Fable.Parse("Take the sharp thing, please.");
     >* You arm yourself.
