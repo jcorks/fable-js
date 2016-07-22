@@ -20,16 +20,18 @@ Fable.Ignore(["the", "at", "I", "please", "would"]);
 // the different ways of saying it. Aliases may have spaces and symbols.
 // Just like ignoring words, there are some cases where aliases may be context-dependent 
 // depeinding on what you want to express, so use with caution.
+
 Fable.Alias("sword",     ["blade",      "weapon",  "pointy thing "]);
 Fable.Alias("check",     ["look",       "examine", "go to",       "scrutinize", "examine", "inspect", "consider"]);
 Fable.Alias("inventory", ["backpack",   "goods",   "stuff"]);
-Fable.Alias("get",       ["take",       "pick",    "pick up",     "lift",       "lift up"]);
+Fable.Alias("get",       ["take",       "pick",    "pick up",     "lift",       "lift up", "gimme"]);
 Fable.Alias("open",      ["unlock"]);
 Fable.Alias("attack",    ["break",      "cut",     "slice",   "hit"]);
 Fable.Alias("leave",     ["exit",       "depart"]);
 Fable.Alias("light",     ["light bulb", "bulb",    "lightbulb"]);
 Fable.Alias("place",     ["put",        "replace"]);
 Fable.Alias("say",       ["yell",       "scream",  "exclaim"]);
+Fable.Alias("read",      ["browse",     "see",     "study",   "scan",           "view",    "skim"]);
 
 
  // The "*" scene is the default scene. In any context, if a parsed command does not 
@@ -37,7 +39,7 @@ Fable.Alias("say",       ["yell",       "scream",  "exclaim"]);
  // is appropriate for general actions that are always available (i.e. "check inventory")
 Fable.Scene("*")
     // * for the Scene, action, and subject will handle all the cases 
-    // where the player types somethign unknown.
+    // where the player types something unknown.
     .Action("*")
         .Object("*",
             function(){
@@ -69,13 +71,14 @@ Fable.Scene("*")
 // The initial scene.
 Fable.Scene("Room")
     .OnEnter(function(room){
-        world.Print("You find yourself in an dimly-lit room.");
+        world.Print("You find yourself in a dimly-lit room.");
 
         if (!room.visited) {
             room.doorLocked = true;
             room.hasSword   = true;
             room.hasLight   = true;
-            room.visited;
+            room.hasNote    = false;
+            room.visited    = true;
         }
     })
 
@@ -86,13 +89,20 @@ Fable.Scene("Room")
                 world.Print("The room you're in is of little comfort, that's for sure.");
                 world.Print("Scanning across the walls lit by a single bulb in the center of the ceiling,");
                 world.Print("you find one door and a disturbing lack of windows.");
-                    
-                if (!world.backpack.Has("sword"))
+
+                if (room.hasNote) {
+                    world.Print("A crumpled note lies on the ground.");
+                }
+                
+                if (room.hasSword)
                     world.Print("Something shimmers on the ground.");
                 
                 if (!room.doorLocked)
                     world.Print("The door is open. Light from the outside flows in the room.");
             })
+
+            
+            
 
             
             
@@ -147,6 +157,15 @@ Fable.Scene("Room")
         })
 
         
+    .Action(["check", "read"])
+        .Object("note",
+            function() {
+                world.Print("The note is so poorly written, you can only make out");
+                world.Print("a few words.");
+                world.Print("\".... Check ..... sword ....\"");
+            })
+        
+        
     .Action("attack")
         .Object("light",
             function(room){
@@ -166,17 +185,17 @@ Fable.Scene("Room")
                     world.Print("It's already broken.");
                 }
             })
-        
 
             
     .Action("get")
         .Object("sword", 
-            function(){
+            function(room){
                 world.Print("You pick up the sword. Good thinking.");
                 world.backpack.Add("sword");
                 
                 
-                
+
+                    
                 
                 
                 // remove callback
@@ -211,6 +230,14 @@ Fable.Scene("Room")
                         
                     }
                 );
+                
+                
+                if (!room.hasNote) {
+                    world.Print("Huh. It looks like there was a note underneath it.");
+                    room.hasNote = true;
+                }
+                
+                room.hasSword = false;
                 return function(){
                     world.Print("It looks like you already have the sword.");
                 };
@@ -230,6 +257,17 @@ Fable.Scene("Room")
                 }
             })
             
+        .Object("note",
+            function(room) {
+                if (room.hasNote) {
+                    world.backpack.Add("note");
+                    room.hasNote = false;
+                } else {
+                    world.Print("You seem to have already put the note in your backpack.");
+                }
+            })
+        
+        
             
             
         .Object("*",
@@ -262,7 +300,10 @@ Fable.Scene("Room")
     
     
     .Action(["say"])
-        .Object("*")
+        .Object("*",
+            function() {
+                world.Print("You say words no one else can hear.");
+            })
 ;
 
 

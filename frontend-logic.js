@@ -40,7 +40,10 @@ world.backpack.Remove = function(name) {
 
 // Returns whether the item is in the backpack
 world.backpack.Has = function(item) {
-    return world.backpack.contents.indexOf(item) != -1;
+    for(var i in world.backpack.contents) {
+        if (world.backpack.contents[i] == item) return true;
+    }
+    return false;
 }
 
 // Powers up the item
