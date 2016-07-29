@@ -12,6 +12,12 @@ As such, Fable-js is purely general: no other tools are given. (Though the examp
 frontend that best suits your intentions).
 
 
+[A live example](https://jcorks.github.io/fable-js/)
+
+[Documentation](https://jcorks.github.io/fable-js/docs/html/namespaceFableJS.html)
+
+
+
 Usage
 -----
 
