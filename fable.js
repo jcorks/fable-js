@@ -28,12 +28,16 @@ SOFTWARE.
  *       
  */
 
-// Fable targets IE 8 and up.
+// Fable targets IE 5 and up.
 
 
 
 
-
+/// \brief Contains all Fable functions and attributes.
+///
+/// A namespace that encapsulates the state of Fable. All functions modify the state of 
+/// Fable. The Fable interface is plit up into two sections: the \ref builder-interface "builder interface"
+///
 var Fable = {};
     Fable.compatability = {};
     Fable.internal = {};
@@ -415,7 +419,8 @@ Fable.internal.ParseGroup = function(input, root) {
 /////////////////// BUILDERS INTERFACE /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-// Begins a new scene context
+
+// Begins a new scene context.
 Fable.Scene = function(nameRaw) {
 
     Fable.internal.CreateNodes(nameRaw, 0);
@@ -434,11 +439,13 @@ Fable.OnEnter = function(cb) {
     return Fable;
 };
 
+
 // Adds an action to be valid for the scene
 Fable.Action = function(verb) {
     Fable.internal.CreateNodes(verb, 1);
     return Fable;
 };
+
 
 // Adds an object to which the verb refers
 Fable.Object = function(name, cb) {
@@ -459,24 +466,13 @@ Fable.Preposition = function(name) {
 
 
 
-
-
 ////////////////////////////////////////////////////////////////////////
 /////////////////// GENERAL  INTERFACE /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
 
 
-
 // Tries to come up with a match to the input.
-// The input string is always parsed as follows
-//
-//      [action] [object] [preposition] [object] [preposition] ...
-//
-// If the input string matches either partiolly or in its entirety, the last callback-weilding 
-// component has its callback called (the only non-callback components 
-// are [prepositions]).
-
 Fable.Parse = function(input) {
     var normalContextResult = Fable.internal.ParseGroup(
         input, Fable.currentScene
@@ -520,7 +516,7 @@ Fable.Parse = function(input) {
 };
     
 
-
+// Changes the scene context.
 Fable.GoToScene = function(name) {
     name = Fable.compatability.trim(name.toLowerCase());
     if (Fable.root.map[name] == null)
@@ -533,9 +529,11 @@ Fable.GoToScene = function(name) {
 };
 
 
-// ignores the specified word in parsing contexts
+
+
+// Specifies the list of words that should be ignored in parsing contexts.
 Fable.Ignore = function(exWord) {
-    
+    Fable.blacklist = [];
     if (typeof exWord == "string")
         Fable.blacklist.push(Fable.compatability.trim(exWord.toLowerCase()));
     for(i = 0; i < exWord.length; i+=1) {
@@ -544,9 +542,6 @@ Fable.Ignore = function(exWord) {
 };
 
 // identifies an exact string as an alias.
-// Aliases may include spaces and special characters, and 
-// may refer to other aliases. Aliases are resolved 
-// before anything else.
 Fable.Alias = function(name, alias) {
 
     if (typeof alias == "string") {
@@ -566,3 +561,4 @@ Fable.Alias = function(name, alias) {
     Fable.aliasListNeedsSort = true;
     
 };
+///\}
