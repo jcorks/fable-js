@@ -71,11 +71,11 @@ Functions</h2></td></tr>
 <tr class="memdesc:abeddb2ac2f6580107f0a037cbeb1f421"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the scene context.  <a href="#abeddb2ac2f6580107f0a037cbeb1f421">More...</a><br /></td></tr>
 <tr class="separator:abeddb2ac2f6580107f0a037cbeb1f421"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Builder Interface</div></td></tr>
-<tr><td colspan="2"><div class="groupText"><p>When using Fable, the builder interface will be what you use to formuate your story. It is builting under the assumption that users will provide input in the form of a sentence or fragment where they, the seubject, are commanding an action. For example, commands such as "I walk to the store." or more simply, "walk store", would be considered fairly typical kinds of input from the user. As you can probably note, there are many ways to express the same command. This interface will help manage the complexity introduced form this observation.</p>
+<tr><td colspan="2"><div class="groupText"><p>When using Fable, the builder interface will be what you use to formuate your story. It is built under the assumption that users will provide input in the form of a sentence or fragment where they, the subject, are commanding the avatar to commit to an action. For example, commands such as "I walk to the store." or more simply, "walk store", would be considered fairly typical kinds of input from the user. As you can probably note, there are many ways to express the same command. This interface will help manage the complexity introduced from this observation.</br></br><a href="../../story.js">Here is a full example of its use </a> and <a href="../../index.html"> what happens when its put into action.</a></p>
 <p>The builder interface focuses on breaking down what the user is trying to communicate with their commands. The basic command in Fable consists of at least an Action and an Object within the context of a Scene.</p>
-<p>A scene is a context by which the words are interpreted. Actions, Objects, and other blocks are unique to the context. The action is what the user wants to do. As such, it is usually represented by a verb. The object is what the action applies to.</p>
+<p>A Scene is the context by which the words are interpreted. Actions, Objects, and other blocks are unique to the context. The action is what the user wants to do. As such, it is usually represented by a verb. The object is what the action applies to.</p>
 <h2>Wildcards </h2>
-<p>In a lot of situations, you may find that your action may not need an object, or that your action applies no matter what scene your in. In this situation, you may find it useful to use the wildcard "*" as the name. The wildcard name is interpreted as "anything", so defining an action of "look" and an object "*" will match any object if 'look' is used as the action by the user. Usage of wildcards also introduces the concept of match strength. Wildcard matches are more vague than direct matches, so if a commands with more direct word matches will be prioritized over one with more wildcards. As such, wildcards are extremely useful for specifying handlers for unknown words. </p>
+<p>In a lot of situations, you may find that your action may not need an object, or that your action applies no matter what scene you're in. In this situation, you may find it useful to use the wildcard "*" as the name. The wildcard name is interpreted as "anything", so defining an action of "look" and an object "*" will match any object if 'look' is used as the action by the user. Usage of wildcards also introduces the concept of match strength. Wildcard matches are more vague than direct matches, so a command with more direct word matches will be prioritized over one with more wildcards. As such, wildcards are extremely useful for specifying handlers for unknown words. </p>
 </div></td></tr>
 <tr class="memitem:a1c0fb84d533bedcd597e63b6530a4233"><td class="memItemLeft" align="right" valign="top">Fable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceFableJS.html#a1c0fb84d533bedcd597e63b6530a4233">Scene</a> (ArrayOrString nameRaw)</td></tr>
 <tr class="separator:a1c0fb84d533bedcd597e63b6530a4233"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -152,7 +152,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>identifies an exact string as an alias. </p>
+<p>Identifies an exact string as an alias. </p>
 <p>Aliases may include spaces and special characters, and may refer to other aliases. Aliases are resolved before anything else. </p>
 
 </div>
@@ -172,7 +172,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Changes the scene context. </p>
-<p>Most actions scene to provide context for how the command should be interpreted. GoToScene provides the mechanism to choose what built scenes should serve as the new context. Successfully changing to the scene calls the scene's callback. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Most actions scene to provide context for how the command should be interpreted. GoToScene provides the mechanism to choose what built scenes should serve as the new context. Successfully changing to the scene calls the scene's OnEnter callback. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>Name of the scene to change to. If the scene does not exist, no action is taken. </td></tr>
   </table>
