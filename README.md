@@ -12,7 +12,8 @@ As such, Fable-js is purely general: no other tools are given. (Though the examp
 frontend that best suits your intentions).
 
 
-[A live example](https://jcorks.github.io/fable-js/)
+[A live example](https://jcorks.github.io/fable-js/) and [its story source](https://jcorks.github.io/fable-js/story.js) 
+, [its driving logic](https://jcorks.github.io/fable-js/frontend-logic.js), [and its html.](https://jcorks.github.io/fable-js/index.html)
 
 [Documentation](https://jcorks.github.io/fable-js/docs/html/namespaceFableJS.html)
 
