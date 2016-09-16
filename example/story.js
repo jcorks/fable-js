@@ -199,7 +199,7 @@ Fable.Scene("Room")
                 
                 
                 // remove callback
-                Fable.Scene("Room").Action("check").Object(["shimmer","thing,","ground","shimmering item","item"], null);
+                Fable.Scene("Room").Action("check").Object(["shimmer","thing,","ground","item"], null);
                 
                 
                 
